@@ -55,13 +55,26 @@ exports.modifySauce = (req, res, next) => {
 };
 
 exports.likeSauce = (req, res, next) => {
+
   Sauce.findOne({
-    _id: req.params.id
+    _id: req.params.id,
   }).then(
     (sauce) => {
-      sauce.usersLiked.push(sauce.userId);
-      console.log(sauce.usersLiked);
+      console.log(req.body.like);
+      // TODO
+      if (req.body.like === 1 ){
+          sauce.likes += 1
+          sauce.usersLiked.push(req.body.userId)
+        }
+      if (req.body.like === -1) {
+          sauce.dislikes += 1
+          sauce.usersDisliked.push(req.body.userId)
+        }
       sauce.save()
+      //
+      .then(() => res.status(200).json({
+        message: 'Objet modifié !'
+      }))
     }
   ).catch(
     (error) => {
@@ -71,7 +84,6 @@ exports.likeSauce = (req, res, next) => {
     }
   );
 };
-
 
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({
