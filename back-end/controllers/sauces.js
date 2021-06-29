@@ -55,26 +55,33 @@ exports.modifySauce = (req, res, next) => {
 };
 
 exports.likeSauce = (req, res, next) => {
-
   Sauce.findOne({
     _id: req.params.id,
   }).then(
     (sauce) => {
-      console.log(req.body.like);
-      // TODO
-      if (req.body.like === 1 ){
-          sauce.likes += 1
-          sauce.usersLiked.push(req.body.userId)
-        }
+      const alreadyLiked = req.body.like === 0 && sauce.usersLiked.find(e => e == req.body.userId);
+      const alreadyDisliked = req.body.like === 0 && sauce.usersDisliked.find(e => e == req.body.userId);
+
+      if (req.body.like === 1) {
+        sauce.likes += 1;
+        sauce.usersLiked.push(req.body.userId);
+      }
       if (req.body.like === -1) {
-          sauce.dislikes += 1
-          sauce.usersDisliked.push(req.body.userId)
-        }
+        sauce.dislikes += 1;
+        sauce.usersDisliked.push(req.body.userId);
+      }
+      if (alreadyLiked) {
+        sauce.likes -= 1;
+        sauce.usersLiked.splice(sauce.usersLiked.findIndex(e => e == req.body.userId), 1);
+      }
+      if (alreadyDisliked) {
+        sauce.dislikes -= 1;
+        sauce.usersDisliked.splice(sauce.usersDisliked.findIndex(e => e == req.body.userId), 1);
+      }
       sauce.save()
-      //
-      .then(() => res.status(200).json({
-        message: 'Objet modifié !'
-      }))
+        .then(() => res.status(200).json({
+          message: 'Objet modifié !'
+        }))
     }
   ).catch(
     (error) => {
