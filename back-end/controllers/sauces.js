@@ -71,12 +71,12 @@ exports.likeSauce = (req, res, next) => {
         sauce.usersDisliked.push(req.body.userId);
       }
       if (alreadyLiked) {
-        sauce.likes -= 1;
-        sauce.usersLiked.splice(sauce.usersLiked.findIndex(e => e == req.body.userId), 1);
+        sauce.likes -= 1; 
+        sauce.usersLiked.splice(sauce.usersLiked.findIndex(e => e === req.body.userId), 1);
       }
       if (alreadyDisliked) {
         sauce.dislikes -= 1;
-        sauce.usersDisliked.splice(sauce.usersDisliked.findIndex(e => e == req.body.userId), 1);
+        sauce.usersDisliked.splice(sauce.usersDisliked.findIndex(e => e === req.body.userId), 1);
       }
       sauce.save()
         .then(() => res.status(200).json({
